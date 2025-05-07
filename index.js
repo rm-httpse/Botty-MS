@@ -5,7 +5,7 @@ import { createServer } from 'http';
 const fastify = Fastify({ logger: true });
 const httpServer = createServer();
 
-await fastify.listen({ server: httpServer, port: 8000 });
+await fastify.listen({ server: httpServer, port: process.env.PORT, host: process.env.HOST });
 
 const io = new SocketIOServer(httpServer, {
   cors: { origin: '*' }
