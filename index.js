@@ -53,6 +53,10 @@ const updateCall = (evt, role, socket) => {
 const botNamespace = io.of('/bot');
 const webNamespace = io.of('/web');
 
+fastify.get('/', async (request, reply) => {
+  reply.status(200).send({ message: `Shits working`})
+});
+
 botNamespace.on('connection', socket => {
   updateCall('connect', 'bot', socket)
 
