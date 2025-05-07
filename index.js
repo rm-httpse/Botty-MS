@@ -24,7 +24,8 @@ const httpServer = createServer(fastify.server);
 await fastify.listen({ server: httpServer, port: process.env.PORT || 3000, host: process.env.HOST || 'localhost' });
 
 const io = new SocketIOServer(fastify.server, {
-  cors: corsConfig
+  cors: corsConfig,
+  path: '/web/socket.io/'
 });
 
 let [call, botNode, webNode] = [false, false, false]
