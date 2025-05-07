@@ -5,13 +5,17 @@ import { createServer } from 'http';
 const fastify = Fastify({ logger: true });
 const httpServer = createServer();
 
+fastify.get('/', async (request, reply) => {
+  reply.status(200).send({ message: `Shits working`})
+});
+
 await fastify.listen({ server: httpServer, port: process.env.PORT, host: process.env.HOST });
 
 const io = new SocketIOServer(httpServer, {
   cors: { origin: '*' }
 });
 
-let [call, botNode, webNode] = [false, null, null]
+let [call, botNode, webNode] = [false, false, false]
 
 const updateCall = (evt, role, socket) => {
   if (role === 'bot' && evt === 'connect') {
@@ -52,10 +56,6 @@ const updateCall = (evt, role, socket) => {
 
 const botNamespace = io.of('/bot');
 const webNamespace = io.of('/web');
-
-fastify.get('/', async (request, reply) => {
-  reply.status(200).send({ message: `Shits working`})
-});
 
 botNamespace.on('connection', socket => {
   updateCall('connect', 'bot', socket)
