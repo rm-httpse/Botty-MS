@@ -1,18 +1,30 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors';
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer } from 'http';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const fastify = Fastify({ logger: true });
-const httpServer = createServer();
+const corsConfig = {
+  origin: process.env.CORS_ORIGIN_LIST?.split(',') || [],
+  methods: process.env.CORS_METHOD_LIST?.split(',') || [],
+  credentials: true
+}
+
+await fastify.register(cors, corsConfig);
 
 fastify.get('/', async (request, reply) => {
   reply.status(200).send({ message: `Shits working`})
 });
 
-await fastify.listen({ server: httpServer, port: process.env.PORT, host: process.env.HOST });
+const httpServer = createServer(fastify.server);
 
-const io = new SocketIOServer(httpServer, {
-  cors: { origin: '*' }
+await fastify.listen({ server: httpServer, port: process.env.PORT || 3000, host: process.env.HOST || 'localhost' });
+
+const io = new SocketIOServer(fastify.server, {
+  cors: corsConfig
 });
 
 let [call, botNode, webNode] = [false, false, false]
