@@ -78,12 +78,14 @@ botNamespace.on('connection', socket => {
   });
 
   // Events for bot host
-  socket.on('data', (data) => {
+  socket.on('bot-data', (data) => {
     fastify.log.info({ data }, 'data');
+    io.of('/web').emit('bot-data');
   });
 
-  socket.on('question', (data) => {
+  socket.on('bot-question', (data) => {
     fastify.log.info({ data }, 'question');
+    io.of('/web').emit('bot-question');
   });
 });
 
@@ -95,7 +97,32 @@ webNamespace.on('connection', socket => {
   });
 
   // Events for web
-  socket.on('order', (data) => {
+  socket.on('usr-order', (data) => {
     fastify.log.info({ data }, 'order');
+    io.of('/bot').emit('usr-order');
   });
 });
+
+/* 
+{
+  "type": "bot_update",
+  "payload": {
+    "screenshot": "data:image/jpeg;base64,...",  // comprimido en JPEG
+    "state": {
+      "status": "idle",
+      "current_action": null
+    },
+    "timestamp": 1715178391234
+  }
+}
+
+{
+  "type": "bot_command",
+  "payload": {
+    "command": "start_action",
+    "data": {
+      "action_id": "walk_to_bank"
+    }
+  }
+}
+*/
